@@ -2,16 +2,24 @@
 
 import requests
 import re
+import os
 from http import HTTPStatus
 from requests.exceptions import ConnectTimeout, ReadTimeout
 from urllib3.exceptions import InsecureRequestWarning
 
+# Get environamental values needed for operation
+try:
+    MAX_TIMEOUT = os.environ["MAX_TIMEOUT"]
+except KeyError:
+    print("[INFO]: MAX_TIMEOUT not provided as environamental variable. Setting\
+default value 10")
+    MAX_TIMEOUT = 10
 
 def check_url(url):
     try:
         status_code = requests.get(
             url,
-            timeout=10,
+            timeout = MAX_TIMEOUT,
             verify=False
         ).status_code
 
@@ -43,17 +51,14 @@ def check_links(items):
     ]
     findings = 0
     message = ""
-    message += "############################################################\n"
-    message += "# Starting link check.\n"
-    message += "############################################################\n\n"
+    message += "# Link Checker\n"
+    print("[INFO]: Starting link check ...")
     # This prevents the script from spamming warnings when disabling SSL verification.
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
     for name in sorted(items.keys()):
         item = items[name]
         nonExistingFields = []
-
-        #print("[INFO]: Checking " + name + " ...")
 
         links = []
         for (index, field) in enumerate(textFields):
@@ -103,13 +108,11 @@ def check_links(items):
             message += "\n" 
 
     if findings > 0:
-        message += "############################################################\n"
-        message += "# Finished Link Integrity Check\n"
-        message += "# {0} of {1} URLs returned an error.\n".format(str(findings), len(items))
-        message += "############################################################\n\n"
+        message += "{0} of {1} URLs returned an error\n".format(str(findings), len(items))
+        message += "Link integrity check done\n"
     else:
-        message += "\n############################################################\n"
-        message += "# None Of The Checks Failed\n"
-        message += "############################################################\n"
+        message += "None of the checks failed\n"
+        message += "Link integrity check done\n"
+    print("[INFO]: Finished link check")
 
     return (message)

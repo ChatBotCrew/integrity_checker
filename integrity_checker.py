@@ -2,20 +2,50 @@
 from link_checker import check_links
 from wiki_text_checker import check_wiki_text
 from table_generator import generate_table
-from field_checker import check_fields
 from send_mail import send_mail
 
-from argparse import ArgumentParser
 import requests
 import json
+import os
 import sys
 
+# Get environamental values needed for operation
+try:
+    API_TOKEN = 'Basic ' + os.environ["API_TOKEN"]
+    print(API_TOKEN)
+except KeyError:
+    print("[ERR]: API_TOKEN not provided as environmental variable. Exiting ...")
+    sys.exit(1)
 
-max_timeout = 10
+try:
+    # This value disables the generation of the table
+    # as well as seding it via email
+    TABLE_DISABLED = os.environ["DISABLE_TABLE"].lower()
+except KeyError:
+    print("[INFO] DISABLE_TABLE not provided as environmental variable. Setting default: False")
+    TABLE_DISABLED = "False"
+
+try:
+    LINK_CHECKER_DISABLED = os.environ["DISABLE_LINK_CHECKER"].lower()
+except KeyError:
+    print("[INFO] DISABLE_LINK_CHECKER not provided as environmental variable. Setting default: False")
+    LINK_CHECKER_DISABLED = "False"
+
+try:
+    WIKI_CHECKER_DISABLED = os.environ["DISABLE_WIKI_CHECKER"].lower()
+except KeyError:
+    print("[INFO] DISABLE_WIKI_CHECKER not provided as environmental variable. Setting default: False")
+    WIKI_CHECKER_DISABLED = "False"
+
+print(TABLE_DISABLED)
+print(LINK_CHECKER_DISABLED)
+print(WIKI_CHECKER_DISABLED)
+
+print()
+
 base_url = "https://liquidebleiben.codebeamer.com/api/v3"
 request = "/trackers/2221/reports/3017/items?page=1&pageSize=500"
-api_token = "Basic <token>"
-headers = {'Authorization': api_token, 'Content-Type': 'application/json'}
+headers = {'Authorization': API_TOKEN, 'Content-Type': 'application/json'}
 
 
 def parse_items_to_named_dict(content):
@@ -38,24 +68,9 @@ def parse_items_to_named_dict(content):
     return items
 
 def main():
-    print("############################################################")
-    print("# This program pulls all finder related data from the")
-    print("# \"Wir bleiben liquide\" codebeamer instance and executes")
-    print("# different checks on them. To make this work you have to")
-    print("# provide this script with a valid api token.")
-    print("#")
-    print("# Enjoy :)")
-    print("############################################################\n")
-
-#   parser = ArgumentParser(
-#       description="This is an cli tool to check different")
-
-#   parser.add_argument(
-#       'file_path',
-#       type=Path,
-#       metavar='file',
-#       help='Path to the file to be checked'
-#   )
+    print("[INFO]: ############################################################")
+    print("[INFO]: # Starting integirty checker")
+    print("[INFO]: ############################################################\n")
 
     print("[INFO]: Sending request ...")
     answer = requests.get(base_url+request, headers=headers)
@@ -69,13 +84,31 @@ def main():
     content = json.loads(answer.content)
     items = parse_items_to_named_dict(content['items'])
 
-    generate_table(items)
+    if TABLE_DISABLED == 'true':
+        print("[INFO]: Skipping table generation ...")
+    else:
+        generate_table(items)
 
     message = ""
-    message += check_links(items) +\
-        check_wiki_text(items) +\
-        check_fields(items)
+    if LINK_CHECKER_DISABLED == 'true':
+        print("[INFO]: Skipping link checker ...")
+    else:
+        message += check_links(items)
 
-    send_mail(message)
+    if WIKI_CHECKER_DISABLED == 'true':
+        print("[INFO]: Skipping wiki checker ...")
+    else:
+        message += check_wiki_text(items)
+
+    print("[INFO]: Displaying message to be send ...")
+    print(message)
+    print("[INFO]: End of message ...")
+
+    send_mail(TABLE_DISABLED, message)
+
+    print("[INFO]: ############################################################")
+    print("[INFO]: # Integirty checker finished")
+    print("[INFO]: ############################################################\n")
+
 if __name__ == "__main__":
     main()

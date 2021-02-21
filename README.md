@@ -1,43 +1,45 @@
 # Integrity Checker
 
-This projet is quality of life tooling for the data backend of
+This projet is a quality of life tooling for the data backend of
 [wir-bleiben-liquide](https://github.com/ChatBotCrew/liquide-bleiben). 
 It's purpose is to automate the checking of different aspects of
 data qulity like:
 - availability of links
 - markdown formatting mistakes
-- missing fields
 - create a `xlsx` file with all fields
 
 # Setup
 
-For this project to work to secrets need to be given:
-1. An token for the codebeamer API (`./integrity_checker.py`, replace `<token>`)
-3. Credentials for an email account (`./send_mail.py`)
-Additionally one can enter a list of recipients in `./send_mail.py`
-as well.
+The script can either be run as is or as a part of
+docker container. For building the container a dockerfile
+is provided. Build the docker container with 
+`docker build -t <image-name> .`. The dockerized
+script can be run with `docker run -e <list of environemental variables> <image-name> --name <container-name>`.
+When running the script without docker make sure the follwing requirements
+are met:
+- [python3](https://realpython.com/installing-python/)
+- [pip3](https://pip.pypa.io/en/stable/installing/) 
+- necessary python packeges (install with `pip3 install -r <path to requirements.txt>`
+Whe all requirement are met just run the `integrity_checker.py` script (make sure all envrionmental variables ar set).
 
-With no argument parsing implemented to enable or disable parts of
-the program comment out the specific functions calls in the main
-function of `./integrity_checker.py`.
+## Configuration over environmental variables
 
-## Requirements
+### Necessary variables
 
-To run this project you need to have [python3](https://realpython.com/installing-python/)
-and [pip3](https://pip.pypa.io/en/stable/installing/) installed.
-When these requirements are met you can install all
-needed packages with `pip3 install -r <path to requirements.txt>`.
+| Key              | Description                                                        |
+| ---              | -----------                                                        |
+| API_TOKEN        | Basic Auth token for Codebeamer (Only token not basic auth string) |
+| FROM_ADDR        | Email address of sending email account                             |
+| FROM_ADDR_PW     | Password of email account                                          |
+| SMTP_SERVER      | SMTP-Server of email account                                       |
+| SMTP_SERVER_PORT | SMTP-Server port                                                   |
+| RECIPIENTS       | Space seperated list                                               |
 
-# Running it
+### Optional variables
 
-When you have entered all necessary secrets [see Setup](#setup) you
-can start the script from it's directory by invoking `python3 integrity_checker.py`.
-
-# TODO
-- program control over argument parsing
-  - trackers of what status shall be checked 
-  - what checks should be done
-  - enable/disable email notifcation -  control over content and metadata
-- proper logging
-- project setup with poetry
-- config or at least env file for secrets
+| Key                  | Description                                            |
+| ---                  | -----------                                            |
+| DISABLE_TABLE        | Bool (as string)                                       |
+| DISABLE_LINK_CHECKER | Bool (as string)                                       |
+| DISABLE_WIKI_CHECKER | Bool (as string)                                       |
+| MAX_TIMEOUT          | Number in seconds until http requests counts as failed |

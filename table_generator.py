@@ -3,11 +3,6 @@ import xlsxwriter
 
 fileName = "table.xlsx"
 def generate_table(items):
-    # tableFields = [
-    #     "Kurzbeschreibung des Programms",
-    #     "Förderung",
-    #     "Verantwortliche Institution"
-    # ]
     tableFields = [
         'Anlaufstelle',
         'Antragsformular',
@@ -49,9 +44,7 @@ def generate_table(items):
         'Zusätzliche Informationen'
     ]
 
-    print("\n############################################################")
-    print("# Starting Table Generation") 
-    print("############################################################\n")
+    print("[INFO]: Starting table generation ...") 
 
     workBook = xlsxwriter.Workbook(fileName)
     sheet = workBook.add_worksheet()
@@ -85,16 +78,8 @@ def generate_table(items):
             try:
                 sheet.write(row, col, item['fields'][field]['value'], text)
             except (KeyError):
-                if field == "Kurzbeschreibung des Programms":
-                    print(" " + str(item['fields']['Förderungsart']['values'][0]['name']) + " " + name)
                 sheet.write(row, col, "No entry in item", text)
 
     workBook.close()
 
-    print("\n############################################################")
-    print("# Finished Table Generation")
-    print("############################################################\n")
-
-    print("\n############################################################")
-    print("# File written to ./" + fileName)
-    print("############################################################\n")
+    print("[INFO]: Finished table generation ...")

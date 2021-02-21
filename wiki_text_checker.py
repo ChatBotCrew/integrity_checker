@@ -4,6 +4,8 @@ import re
     
 
 def check_wiki_text(items):
+    print("[INFO]: Starting wiki syntax check ...")
+
     wikiTextFields = [
         'Spezielle Voraussetzungen',
         'Kurzbeschreibung des Programms',
@@ -14,11 +16,9 @@ def check_wiki_text(items):
     }
 
     message = ""
-    message += "############################################################\n"
-    message += "# Starting syntax check for Wiki entries\n"
-    message += "############################################################\n\n"
+    message += "# Syntax check for Wiki entries\n"
 
-    print("Generating rules ...")
+    print("[INFO]: Generating rules ...")
     # turn definitions into regex parsers\
     checks = {check: re.compile(checks[check], re.MULTILINE) for check in checks}
 
@@ -63,13 +63,11 @@ def check_wiki_text(items):
         
         message += "\n"
 
-        message += "############################################################\n"
-        message += "# Finished Syntax Check\n"
-        message += "# {0} Of {1} Items {2} Checks Failed: \n".format(itemCount, len(items), findingCount)
-        message += "############################################################\n\n"
+        message += "{0} Of {1} Items {2} Checks Failed.\n".format(itemCount, len(items), findingCount)
+        message += "Syntax Check End\n"
     else:
-        message +="############################################################"
-        message +="# No failed checks"
-        message +="############################################################\n\n"
+        message += "No failed checks"
+        message += "Syntax Check End\n"
 
+    print("[INFO]: Wiki syntax check done ...")
     return message
