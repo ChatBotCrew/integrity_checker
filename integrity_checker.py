@@ -12,7 +12,6 @@ import sys
 # Get environamental values needed for operation
 try:
     API_TOKEN = 'Basic ' + os.environ["API_TOKEN"]
-    print(API_TOKEN)
 except KeyError:
     print("[ERR]: API_TOKEN not provided as environmental variable. Exiting ...")
     sys.exit(1)
@@ -22,24 +21,20 @@ try:
     # as well as seding it via email
     TABLE_DISABLED = os.environ["DISABLE_TABLE"].lower()
 except KeyError:
-    print("[INFO] DISABLE_TABLE not provided as environmental variable. Setting default: False")
-    TABLE_DISABLED = "False"
+    print("[INFO] DISABLE_TABLE not provided as environmental variable. Setting default: false")
+    TABLE_DISABLED = "false"
 
 try:
     LINK_CHECKER_DISABLED = os.environ["DISABLE_LINK_CHECKER"].lower()
 except KeyError:
-    print("[INFO] DISABLE_LINK_CHECKER not provided as environmental variable. Setting default: False")
-    LINK_CHECKER_DISABLED = "False"
+    print("[INFO] DISABLE_LINK_CHECKER not provided as environmental variable. Setting default: false")
+    LINK_CHECKER_DISABLED = "false"
 
 try:
     WIKI_CHECKER_DISABLED = os.environ["DISABLE_WIKI_CHECKER"].lower()
 except KeyError:
-    print("[INFO] DISABLE_WIKI_CHECKER not provided as environmental variable. Setting default: False")
-    WIKI_CHECKER_DISABLED = "False"
-
-print(TABLE_DISABLED)
-print(LINK_CHECKER_DISABLED)
-print(WIKI_CHECKER_DISABLED)
+    print("[INFO] DISABLE_WIKI_CHECKER not provided as environmental variable. Setting default: false")
+    WIKI_CHECKER_DISABLED = "false"
 
 print()
 
@@ -64,7 +59,7 @@ def parse_items_to_named_dict(content):
             'id': item['id'],
             'fields': fields
         }
-    # print("[INFO]: Parsing successfull ...")
+    print("[INFO]: Parsing successfull ...")
     return items
 
 def main():

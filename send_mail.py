@@ -56,8 +56,8 @@ def send_mail(TABLE_DISABLED, message):
     body += message
 
     msg.attach(MIMEText(body, 'plain'))
-
-    if not TABLE_DISABLED:
+    if TABLE_DISABLED == 'false':
+        print("[INFO]: Attaching xlsx file ...")
         filename = "table.xlsx"
 
         with open(filename, "rb") as fil: 

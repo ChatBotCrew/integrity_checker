@@ -63,7 +63,7 @@ def check_wiki_text(items):
         
         message += "\n"
 
-        message += "{0} Of {1} Items {2} Checks Failed.\n".format(itemCount, len(items), findingCount)
+        message += "{0} Of {1} Items failed.\n".format(itemCount, len(items), findingCount)
         message += "Syntax Check End\n"
     else:
         message += "No failed checks"
